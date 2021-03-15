@@ -1,0 +1,436 @@
+\documentclass[conference]{IEEEtran}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{siunitx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{listings}
+\usepackage[utf8]{inputenc}
+\usepackage{pgfplots}
+\newcommand{\NA}{---}
+\usetikzlibrary{angles, quotes, decorations.markings, positioning}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\usepgfplotslibrary{groupplots,dateplot}
+\usetikzlibrary{patterns,shapes.arrows}
+\pgfplotsset{compat=newest}
+
+
+\begin{document}
+
+\title{A Study of Standing Waves in a Tube}
+
+\author{\IEEEauthorblockN{Marko Vejnovi\'{c}}
+\IEEEauthorblockA{\textit{Department of Electrical and Computer Engineering} \\
+\textit{Northwestern University}\\
+Evanston, Illinois \\
+markovejnovic2023@u.northwestern.edu}
+}
+
+\maketitle
+
+\begin{abstract}
+    This paper outlines the research conducted in the field of tube harmonics.
+    The relationship between tube length and the resonant wavelength was
+    investigated, as well as the speed of sound. The already well established
+    relationship between the tube length and the resonant wavelength was
+    confirmed with high certainty, and the speed of sound was measured to be
+    341.75 m/s.
+\end{abstract}
+
+\section{Introduction}
+
+A tube allows for the formation of standing pressure waves. Given a sinusoidal
+pressure wave entering a tube with a closed end, the pressure wave will be
+reflected at the back wall of the tube.
+
+For the formation of a standing wave, there must be an anti-node at the back
+wall of the tube and a node at the open end, as shown in Fig.
+\ref{fig:tube-diagram}. This results in a requirement for standing waves:
+\begin{equation}\label{eqn:base}
+    \lambda = \frac{4L}{2n - 1}
+\end{equation}
+
+\begin{figure}[b!]
+    \centering
+    \begin{tikzpicture}
+        \draw[thick, red, domain=0:3, smooth] plot ({\x}, {0.49 * sin(3.6652 * \x r) - 0.5});
+        \draw[thick] (0,0) -- (3,0) -- (3,-1) -- (0,-1);
+    \end{tikzpicture}
+    \caption{Standing Wave in a Closed Tube}
+    \label{fig:tube-diagram}
+\end{figure}
+
+Finally, it is worth noting that \eqref{eqn:base} is equivalent to:
+\begin{equation}\label{eqn:base-freq}
+    \frac{\nu}{f} = \frac{4L}{2n - 1}
+\end{equation}
+
+The aim of this research was to empirically test whether \eqref{eqn:base} is a
+good model for the resonance in a tube, as well as determine the speed of sound
+from \eqref{eqn:base-freq}.
+
+\section{Method}
+
+This section outlines the apparatus used and the procedure.
+
+\subsection{Apparatus}
+
+The experiment setup was as follows. A measuring cylinder was set on a flat
+table. Near its open end an \textit{Audio Technica AT2021}\cite{at2021}
+monodirectional microphone was placed. The microphone was driven by a
+\textit{Focusrite Scarlett Solo 2}\cite{focusrite} into a computer. The
+cylinder was disturbed by a wind stream, induced by simply blowing over its
+top. A block diagram is given in Fig. \ref{fig:block-diagram}. The cylinder
+length was controlled by adding water to it. The device used for measuring
+length was a tape meter with an uncertainty of $\pm 0.5\si{mm}$.
+\textit{Audacity}\cite{audacity} was used for recording the wave.
+
+The temperature, at the time of measuring was around $\ang{15}C$ and the
+humidity was around $40\%$. This yields a wavespeed of \cite{sostbl}:
+\begin{equation*}
+    \nu = 340.8 \si{\frac{m}{s}}
+\end{equation*}
+
+\begin{figure}[b!]
+    \centering
+    \begin{tikzpicture}
+        \node[draw, circle, inner sep=0.1pt, outer sep=0.1pt] (Mic) {\textit{Mic}};
+        \node[draw] (DAC) at (2, 0) {\textit{DAC}};
+        \node[draw] (Computer) at (2, -1) {\textit{Computer}};
+        \draw[->] (Mic) edge (DAC);
+        \draw[->] (DAC) edge (Computer);
+        \draw[thick] (-0.3,-0.3) -- (-0.3,0.3);
+        \draw[thick] (-0.5,0) -- (-0.5,-3) -- (-1,-3) -- (-1,0);
+        \draw[thick, domain=-2.5:-1.5, smooth] plot ({\x}, {0.1 * sin(10 * \x r)});
+        \draw[thick, domain=-2.5:-1.5, smooth] plot ({\x}, {0.1 * sin(10 * \x r) + 0.2});
+    \end{tikzpicture}
+    \caption{The Experimental Setup Block Diagram}
+    \label{fig:block-diagram}
+\end{figure}
+
+\subsection{Procedure}
+
+For each target tube length, water was added to the measuring cylinder to reach
+the target length. The tube length was measured. Recording was initialized on
+the computer and a stream was blown over the tube opening. After blowing was
+done, the recording was saved into a \texttt{wav} file.
+
+\section{Results}
+
+The raw waveforms are available at \cite{raw-waveforms}.
+
+\subsection{Data Processing}
+
+The positive Fourier transform of the waveform was found. The magnitude of the
+Fourier transform was normalized and the peaks were identified. This was all
+done with \textit{python}\cite{python}, \textit{numpy}\cite{numpy},
+\textit{scipy}\cite{scipy} and \textit{matplotlib}\cite{matplotlib}, available
+at \cite{raw-waveforms}.
+
+An example of peak identification is given in Fig. \ref{fig:peaks-identified}.
+
+\begin{figure}[b!]
+    \centering
+    \include{graphs/fourier-peaks/255.tex}
+    \caption{The Fourier Transform Peaks for $l=255\si{mm}$}
+    \label{fig:peaks-identified}
+\end{figure}
+
+As is visible in Fig. \ref{fig:peaks-identified}, there is some peak
+misidentification, so, for each tube length, the peaks were manually considered
+and evaluated to remove those which were definitely peak-identification noise.
+To exemplify, in Fig. \ref{fig:peaks-identified} those were the first, second,
+fourth, fifth, sixth and last peaks.
+
+Generally, it was noticed that there was usually a peak close to $0\si{Hz}$ for
+in every waveform. This is extremely likely a DC offset as those frequencies 
+were very close to $0$, or some sort of low-frequency inaudible electrical
+noise, so I believe it is reasonable to ignore that peak.
+
+A table of peaks for each tube length is given in table \ref{tbl:peaks}. 
+\begin{table}[t!]
+    \caption{The identified peaks for each tube length}
+    \label{tbl:peaks}
+    \begin{tabular}{r | r r r r r}
+        \toprule
+        $l [mm]$ & \multicolumn{5}{c}{Harmonic Frequencies $[\si{Hz}]$} \\
+        $\pm 0.5$ & $n=1$ & $n=2$ & $n=3$ & $n=4$ & $n=5$ \\
+        \midrule
+        313 & 263.93 & 791.94 & 1321.57 & 1863.69 & 2399.00 \\
+        296 & 279.08 & 837.23 & 1413.22 & 1976.29 & \NA \\
+        275 & 299.76 & 900.41 & 1504.67 & 2124.29 & \NA \\
+        255 & 323.66 & 973.60 & 1627.58 & \NA & \NA \\
+        235 & 353.6 & 1045.3 & 1755.71 & 2467.44 & \NA \\
+        215 & 379.46 & 1133.93 & 1904.43 & \NA & \NA \\
+        195 & 417.28 & 1231.62 & 2096.49 & \NA & \NA \\
+        175 & 463.01 & 1376.02 & 2325.92 & \NA & \NA \\
+        155 & 516.09 & 1231.28 & 1534.39 & \NA & \NA \\
+        135 & 579.79 & 1384.31 & 1783.82 & \NA & \NA \\
+        115 & 681.76 & 2078.03 & \NA & \NA & \NA \\
+        95 & 804.82 & 2443.65 & \NA & \NA & \NA \\
+        75 & 1010.84 & \NA & \NA & \NA & \NA \\
+        \bottomrule
+    \end{tabular}
+    \centering
+\end{table}
+
+From \eqref{eqn:base-freq}:
+\begin{equation*}
+    \frac{1}{f} = \frac{4}{\nu} \cdot \frac{L}{2n - 1}
+\end{equation*}
+
+The plot of $1 / f$ over $L$ from table \ref{tbl:peaks} is given in Fig.
+\ref{fig:linplot}.
+
+\begin{figure}[b!]
+    \centering
+
+    \include{graphs/l-1f-rel.tex}
+
+    \caption{The relationship between the tube length and the inverse frequency}
+    \label{fig:linplot}
+\end{figure}
+
+The linear best fit coefficients as well as the deviations, are given in table
+\ref{tbl:fit-stats}.
+
+\begin{table}[t!]
+    \centering
+    \caption{The Linear Fit Values}
+    \label{tbl:fit-stats}
+    \begin{tabular}{r | r r r r}
+        \toprule
+        \multirow{2}{*}{$n$} & \multirow{2}{*}{Slope $k$} & \multirow{2}{*}{y-intercept $c$} & \multicolumn{2}{c}{Fit Uncertainty} \\
+        & & & $\sigma(k)$ & \sigma(c) \\
+        \midrule
+        1 & 1.17E-2 & 1.27E-4 & 5.76E-5 & 1.20E-5 \\
+        2 & 5.25E-3 & -9.76E-5 & 1.70E-3 & 3.66E-4 \\
+        3 & 2.34E-3 & 1.84E-5 & 2.28E-5 & 5.67E-6 \\
+        4 & 1.68E-3 & 1.07E-5 & 2.27E-5 & 6.38E-6 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+For each value, the speed of sound $\nu$ was calculated according to:
+\begin{equation}\label{eqn:soundspeed}
+    \frac{4}{\nu \left(2n - 1\right)} = k
+\end{equation}
+
+These values are given in table \ref{tbl:soundspeed}.
+
+\begin{table}[t!]
+    \centering
+    \caption{The Speed of sound calculated according to \eqref{eqn:soundspeed}}
+    \label{tbl:soundspeed}
+    \begin{tabular}{r | r r}
+        \toprule
+        $n$ & $\nu [\si{\frac{m}{s}}]$ & $\Delta \nu [\si{\frac{m}{s}}]$ \\
+        \midrule
+        1 & 343.32 & 1.70 \\
+        2 & 253.93 & 81.98 \\
+        3 & 341.08 & 3.31 \\
+        4 & 340.85 & 4.61 \\
+        \midrule
+        $\bar{\nu}$ & \multicolumn{2}{c}{$319.80 \pm 91.6$} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\section{Discussion}
+
+In this section I discuss the processed data, considering possible sources of
+error.
+
+\subsection{Lack of Data Points for higher harmonics and lower tube lengths}
+
+Some peaks are not available in table \ref{tbl:peaks}. This is due to the fact
+that high frequency harmonics decay faster than lower frequency ones, implying
+that at high frequencies the higher harmonics have small average amplitude.
+This resulted in the Fourier transform not having peaks for higher harmonics,
+resulting in a lack of data points.
+
+\subsection{Outliers}
+
+There is a clear outlier for $n=2$ at $l = 275\si{mm}$. This outlier is most
+likely due to a systematic error -- either the microphone was tapped or some
+external noise was present. I find it unlikely for this data point to be
+attributed to statistical error as it is more than $5$ standard deviations away
+from the mean.
+
+Consequently, I believe this outlier should be considered as an irrelevant data
+point.
+
+\subsection{Qualitative statiscal analysis of harmonics and sources of error}
+
+As Fig. \ref{fig:linplot} shows, the harmonics $n=1$, $n=3$ and $n=4$ fit very
+neatly with a linear regression and, as table \ref{tbl:fit-stats} shows, the
+square-root deviation from the linear fit is very small for these harmonics.
+
+This leads me to believe the statistical error is very small for these
+harmonics. That being said, the case of $n=4$ has very few data points, so,
+care must be taken when drawing conclusions from it.
+
+As for the case of $n=2$, besides the outlier, there is a higher statistical
+uncertainty from table \ref{tbl:fit-stats}. The graph values also seem to deviate
+more than for $n=1$, $n=3$, $n=4$. I believe this is due to these harmonics
+being in midfrequency range, resulting in them being especially susceptible to
+background noise. Furthermore, it is also important to note that blowing air
+over the open end of the tube also created waveforms, which likely interacted
+at this frequency.
+
+\subsection{Relationship between tube length and wavelength}
+
+As Fig. \ref{fig:linplot} shows, there is a clear linear relationship between
+the tube length and the inverse of the frequency:
+\begin{equation}
+    \frac{1}{f} \propto L
+\end{equation}
+As given in table \ref{tbl:fit-stats}, the $k$ uncertainties are all under $2\%$,
+except for $n=2$, indicating that each that point lies very close to the fit.
+This, furthermore, indicates a strong correlation between the length and the
+inverse frequency.
+
+Since $1/f \propto \lambda$, this implies that:
+\begin{equation}
+    \lambda \propto L
+\end{equation}
+
+The values of the expected coefficients in \eqref{eqn:base-freq}:
+\begin{align*}
+    k(n=1) &= \frac{4}{\nu} = 1.17 \cdot 10^{-2} \\
+    k(n=2) &= \frac{4}{3\nu} = 3.91 \cdot 10^{-3} \\
+    k(n=3) &= \frac{4}{5\nu} = 2.35 \cdot 10^{-3} \\
+    k(n=4) &= \frac{4}{7\nu} = 1.68 \cdot 10^{-3}
+\end{align*}
+
+Each $k$ was compared against the expected value and the results are given in
+table \ref{tbl:coeffs}.
+
+\begin{table}[t!]
+    \centering
+    \caption{The Slope Coefficients}
+    \label{tbl:coeffs}
+    \begin{tabular}{r | r r r}
+        \toprule
+        $n$ & $k_{expected}$ & $k_{actual}$ & $Z-score$ \\
+        \midrule
+        1 & 1.17E-2 & 1.17E-2 & 0 \\
+        2 & 3.91E-3 & 5.25E-3 & 2.69 \\
+        3 & 2.35E-3 & 2.34E-3 & -1.39 \\
+        4 & 1.68E-3 & 1.68E-3 & 0 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+These Z-scores for $n \in {1, 3, 4}$ all give $>95\%$ statistical confidence in
+the relationship between the inverse frequency and the tube length as the one
+predicted. Consequently, this implies that \eqref{eqn:base-freq} holds.
+
+The case of $n=2$ has a high Z-score, but, as previously discussed, I believe
+it is an outlier.
+
+This gives me confidence in stating that the relationship in \eqref{eqn:base}
+holds.
+
+\subsection{The Speed of Sound}
+
+The mean speed of sound across all the harmonics was calculated to be:
+\begin{equation}
+    \nu_1 = (319.80 \pm 91.6) \si{\frac{m}{s}}
+\end{equation}
+
+However, table \ref{tbl:soundspeed} possibly indicates that this may not be the
+correct method in calculating the speed of sound.  As previously discussed, the
+case of $n=2$ had a severe outlier. This outlier propagates up to the
+calculation for the speed of sound, as table \ref{tbl:soundspeed} shows.
+Furthermore, the extremely high uncertainty of $32.28\%$ for the wavespeed of
+the $n=2$ case leads me to believe that it is a useless datapoint in evaluating
+the actual speed of sound.
+
+Disregarding the $n=2$ case, the mean speed is:
+\begin{equation*}
+    \nu_2 = (341.75 \pm 9.62) \si{\frac{m}{s}}
+\end{equation*}
+
+This value has much tighter uncertainty and, I believe, is closer to the true
+one.
+
+The expected speed of sound was:
+\begin{equation*}
+    \nu_{ex} = 340.8 \si{\frac{m}{s}}
+\end{equation*}
+
+The Z-score for $\nu_1$ is:
+\begin{equation*}
+    Z_1 = -0.46
+\end{equation*}
+
+The Z-score for $\nu_2$ is:
+\begin{equation*}
+    Z_1 = 0.17
+\end{equation*}
+
+These small values indicate that both values are correct. That being said, the
+reader must be careful in noting the huge uncertainty for $\nu_1$ and $\nu_2$
+being in the range of $\nu_1 + \Delta \nu_1$.
+
+I believe that $\nu_2$ is the more reasonable measurement and should be the
+considered.
+
+\section{Conclusion}
+
+To conclude, this research appears to indicate, with $>95\%$ statistical
+certainty that \eqref{eqn:base} holds. Furthermore, the speed of sound was
+identified to be:
+\begin{equation*}
+    \nu = (341.75 \pm 9.62) \si{\frac{m}{s}}
+\end{equation*}
+
+\begin{thebibliography}{00}
+    \bibitem{audacity} Audacity® software is copyright © 1999-2021 Audacity
+    Team. The name Audacity® is a registered trademark.
+    \bibitem{at2021} Audio Technica, \textit{AT2021}. [Online]. Available:
+    \url{https://www.audio-technica.com/en-us/at2021}. [Accessed: 15-Mar-2021]. 
+    \bibitem{numpy} Charles R. Harris, K. Jarrod Millman, Stefan J. van der
+    Walt, Ralf Gommers, Pauli Virtanen, David Cournapeau, Eric Wieser, Julian
+    Taylor, Sebastian Berg, Nathaniel J. Smith, Robert Kern, Matti Picus,
+    Stephan Hoyer, Marten H. van Kerkwijk, Matthew Brett, Allan Haldane, Jaime
+    Fernández del Río, Mark Wiebe, Pearu Peterson, Pierre Gérard-Marchant,
+    Kevin Sheppard, Tyler Reddy, Warren Weckesser, Hameer Abbasi, Christoph
+    Gohlke \& Travis E. Oliphant. \textit{Array programming with NumPy},
+    Nature, 585, 357–362 (2020), DOI:10.1038/s41586-020- 2649-2
+    \bibitem{matplotlib} J. D. Hunter, \textit{Matplotlib: A 2D Graphics
+    Environment}, Computing in Science \& Engineering, vol. 9, no. 3, pp.
+    90-95, 2007.
+    \bibitem{scipy} Pauli Virtanen, Ralf Gommers, Travis E. Oliphant, Matt
+    Haberland, Tyler Reddy, David Cournapeau, Evgeni Burovski, Pearu Peterson,
+    Warren Weckesser, Jonathan Bright, Stéfan J. van der Walt, Matthew Brett,
+    Joshua Wilson, K. Jarrod Millman, Nikolay Mayorov, Andrew R. J. Nelson,
+    Eric Jones, Robert Kern, Eric Larson, CJ Carey, İlhan Polat, Yu Feng, Eric
+    W. Moore, Jake VanderPlas, Denis Laxalde, Josef Perktold, Robert Cimrman,
+    Ian Henriksen, E.A. Quintero, Charles R Harris, Anne M. Archibald, Antônio
+    H. Ribeiro, Fabian Pedregosa, Paul van Mulbregt, and SciPy 1.0
+    Contributors. (2020) ''SciPy 1.0: Fundamental Algorithms for Scientific
+    Computing in Python``. \textit{Nature Methods}, 17(3), 261-272
+    \bibitem{python} Python Software Foundation, \textit{Python Language
+    Reference}, version 3.9.  Available: http://www.python.org.
+    \bibitem{focusrite} ``Scarlett Solo,'' \textit{Focusrite}. [Online].
+    Available:
+    \url{https://focusrite.com/en/usb-audio-interface/scarlett/scarlett-solo}.
+    [Accessed: 15-Mar-2021]. 
+    \bibitem{sostbl} ``Velocity of Sound in Air,'' \textit{Engineering
+    ToolBox}. [Online].  Available:
+    \url{https://www.engineeringtoolbox.com/air-speed-sound-d_603.html}.
+    [Accessed: 15-Mar-2021]. 
+    \bibitem{raw-waveforms}
+    \url{https://github.com/markovejnovic/tube-harmonics}
+\end{thebibliography}
+
+\end{document}
